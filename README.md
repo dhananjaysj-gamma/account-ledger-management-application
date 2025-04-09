@@ -42,7 +42,7 @@ A secure and scalable  ledger management application where users can manage thei
 
 ### 📌 Prerequisites
 
-- Java 17
+- Java 21
 - Maven
 - PostgreSQL (or H2 for development)
 - IntelliJ / VS Code
@@ -57,4 +57,58 @@ A secure and scalable  ledger management application where users can manage thei
    git clone https://github.com/dhananjaysj-gamma/account-ledger-management.git
    cd account-ledger-management
 
+---
+
+## 📩 API Endpoints
+
+### 👤 Auth & User
+
+| Method | Endpoint             | Description                    |
+|--------|----------------------|--------------------------------|
+| POST   | `/user/register`     | Register a new user            |
+| POST   | `/user/login`        | Authenticate and receive JWT   |
+| GET    | `/user/{userId}`     | Get user account info          |
+| PUT    | `/user/{userId}`     | Update user info               |
+| PATCH  | `/user/{userId}`     | Partially update user info     |
+| DELETE | `/user/{userId}`     | Soft delete a user             |
+
+---
+
+### 📒 Ledger
+
+| Method | Endpoint              | Description            |
+|--------|-----------------------|------------------------|
+| POST   | `/ledger`             | Create a new ledger    |
+| GET    | `/ledger/{ledgerId}`  | Get ledger details     |
+
+---
+
+### 💸 Transactions
+
+| Method | Endpoint                   | Description                        |
+|--------|----------------------------|------------------------------------|
+| POST   | `/transactions/transfer`   | Transfer funds between ledgers     |
+
+---
+
+## ✅ Testing
+
+This project includes **unit tests** using:
+
+- ✅ JUnit 5  
+- ✅ Mockito  
+- ✅ MockMvc  
+
+### 🔍 Test Coverage
+
+- `UserController`: register, login, CRUD
+- Role-based access control
+- Ledger creation & linking
+- Fund transfer logic
+- Error handling (e.g., Not Found, Unauthorized)
+
+### 🧪 Run Tests
+
+```bash
+./mvnw test
    
