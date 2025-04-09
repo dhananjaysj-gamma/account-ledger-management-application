@@ -93,7 +93,7 @@ public class UserService {
                          new UserNotFoundException("User Not Registered With an ID: "+ userId)
                 );
 
-        boolean hasLedgers=  users.getLedger() != null && !users.getLedger().isEmpty();
+        boolean hasLedgers=  !users.getLedger().isEmpty();
 
         return new UserAccountInformation(
                 users.getUserId(),
@@ -107,6 +107,10 @@ public class UserService {
 
     public UsersDTO updateUserAllDetails(Long userId, Users updateUser) {
 
+        if(userId <=0  || userId < 1000 )
+        {
+            throw new InvalidEntityIdProvidedException("The Id provided is Not Valid, Please check the ID:" + userId);
+        }
         Users existingUsers = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User Not Registered With the Id:"+userId));
 
         existingUsers.setUserId(updateUser.getUserId());
@@ -127,6 +131,10 @@ public class UserService {
 
     public UsersDTO updateDetails(Long userId, Map<String, Object> updateDetails) {
 
+        if(userId <=0  || userId < 1000 )
+        {
+            throw new InvalidEntityIdProvidedException("The Id provided is Not Valid, Please check the ID:" + userId);
+        }
         Users existingUsers = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User Not Registered With an Id:"+userId));
 
         updateDetails.forEach((field,value)->
@@ -152,6 +160,10 @@ public class UserService {
 
    public void deleteUser(Long userId)
    {
+       if(userId <=0  || userId < 1000 )
+       {
+           throw new InvalidEntityIdProvidedException("The Id provided is Not Valid, Please check the ID:" + userId);
+       }
        Users user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User Not Registered"));
        user.setStatus(UserStatus.INACTIVE);
        user.setIsDeleted(true);

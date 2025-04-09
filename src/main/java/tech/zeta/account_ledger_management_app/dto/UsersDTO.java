@@ -9,6 +9,7 @@ import tech.zeta.account_ledger_management_app.enums.UserStatus;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class UsersDTO {
 
 

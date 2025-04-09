@@ -33,7 +33,7 @@ public class LedgerController {
         return ledgerService.getLedgerById(ledgerId);
     }
 
-    @GetMapping("/transaction/history")
+    @GetMapping("/transactions/history")
     public List<TransactionResponse> getLedgerTransactionHistory(@RequestParam Long fromLedgerId)
     {
         return  ledgerService.getTransactionHistoryById(fromLedgerId);

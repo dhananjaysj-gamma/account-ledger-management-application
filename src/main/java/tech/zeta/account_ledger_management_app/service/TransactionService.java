@@ -39,16 +39,13 @@ public class TransactionService {
             throw new InsufficientBalanceException("Insufficient balance in the Ledger");
         }
 
-        if (transactionType == TransactionType.INTERNAL)
+        if (transactionType == TransactionType.INTERNAL && !fromLedger.getUsers().getUserId().equals(toLedger.getUsers().getUserId()))
         {
-            if (!fromLedger.getUsers().getUserId().equals(toLedger.getUsers().getUserId())) {
-                throw new InvalidTransactionTypeException("Internal transactions must be between ledgers of the same user");
-            }
-        } else if (transactionType == TransactionType.EXTERNAL) {
-            if (fromLedger.getUsers().getUserId().equals(toLedger.getUsers().getUserId())) {
+            throw new InvalidTransactionTypeException("Internal transactions must be between ledgers of the same user");
+        } else if (transactionType == TransactionType.EXTERNAL && fromLedger.getUsers().getUserId().equals(toLedger.getUsers().getUserId())) {
                 throw new InvalidTransactionTypeException("External transactions must be between different users");
             }
-        }
+
         fromLedger.setLedgerBalance(fromLedger.getLedgerBalance() - transactionAmount);
         toLedger.setLedgerBalance(toLedger.getLedgerBalance() + transactionAmount);
 
