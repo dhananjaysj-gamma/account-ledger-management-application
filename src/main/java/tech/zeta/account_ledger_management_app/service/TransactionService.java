@@ -1,5 +1,4 @@
 package tech.zeta.account_ledger_management_app.service;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.zeta.account_ledger_management_app.dto.TransactionResponse;
@@ -12,28 +11,27 @@ import tech.zeta.account_ledger_management_app.models.Transaction;
 import tech.zeta.account_ledger_management_app.repository.LedgerRepository;
 import tech.zeta.account_ledger_management_app.repository.TransactionRepository;
 
-import java.time.LocalDateTime;
 
 
 @Service
 public class TransactionService {
+    
+    private final LedgerRepository ledgerRepository;
+    private final TransactionRepository transactionRepository;
+    
 
-
-    @Autowired
-    private LedgerRepository ledgerRepository;
-
-
-    @Autowired
-    private TransactionRepository transactionRepository;
-
+    public TransactionService(LedgerRepository ledgerRepository, TransactionRepository transactionRepository) {
+        this.ledgerRepository=ledgerRepository;
+        this.transactionRepository=transactionRepository;
+    }
 
     @Transactional
     public TransactionResponse processTransaction(Long fromLedgerId, Long toLedgerId, double transactionAmount, TransactionType transactionType) {
 
         Ledger fromLedger = ledgerRepository.findById(fromLedgerId)
-                .orElseThrow(() -> new LedgerNotFoundException("From Ledger not found"));
+                .orElseThrow(() -> new LedgerNotFoundException("Ledger not found:"+fromLedgerId));
         Ledger toLedger = ledgerRepository.findById(toLedgerId)
-                .orElseThrow(() -> new LedgerNotFoundException("To Ledger not found"));
+                .orElseThrow(() -> new LedgerNotFoundException("Ledger not found:"+toLedgerId));
 
         if (fromLedger.getLedgerBalance() < transactionAmount) {
             throw new InsufficientBalanceException("Insufficient balance in the Ledger");
@@ -41,9 +39,9 @@ public class TransactionService {
 
         if (transactionType == TransactionType.INTERNAL && !fromLedger.getUsers().getUserId().equals(toLedger.getUsers().getUserId()))
         {
-            throw new InvalidTransactionTypeException("Internal transactions must be between ledgers of the same user");
+            throw new InvalidTransactionTypeException("Internal transactions must be between ledgers of the same user!");
         } else if (transactionType == TransactionType.EXTERNAL && fromLedger.getUsers().getUserId().equals(toLedger.getUsers().getUserId())) {
-                throw new InvalidTransactionTypeException("External transactions must be between different users");
+                throw new InvalidTransactionTypeException("External transactions must be between different users!");
             }
 
         fromLedger.setLedgerBalance(fromLedger.getLedgerBalance() - transactionAmount);
@@ -52,25 +50,33 @@ public class TransactionService {
         ledgerRepository.save(fromLedger);
         ledgerRepository.save(toLedger);
 
-        Transaction transaction = new Transaction();
-        transaction.setFromLedgerId(fromLedgerId);
-        transaction.setToLedgerId(toLedgerId);
-        transaction.setTransactionAmount(transactionAmount);
-        transaction.setTransactionType(transactionType);
-        transaction.setTransactionDate(LocalDateTime.now());
-        transaction.setLedger(fromLedger);
+        Transaction transaction = addTransactionDetails(fromLedgerId, toLedgerId, transactionAmount, transactionType, fromLedger);
         transactionRepository.save(transaction);
 
-        return new TransactionResponse(
-                transaction.getTransactionId(),
-                transaction.getFromLedgerId(),
-                transaction.getToLedgerId(),
-                transaction.getTransactionAmount(),
-                transaction.getTransactionType(),
-                transaction.getTransactionDate()
-        );
+        return transactionDetails(transaction);
+
     }
 
+    public static Transaction addTransactionDetails(Long fromLedgerId, Long toLedgerId, double transactionAmount, TransactionType transactionType,Ledger ledger) {
+       Transaction transaction = new Transaction();
+       transaction.setFromLedgerId(fromLedgerId);
+       transaction.setToLedgerId(toLedgerId);
+       transaction.setTransactionAmount(transactionAmount);
+       transaction.setTransactionType(transactionType);
+       transaction.setLedger(ledger);
+       return transaction;
+    }
 
+    private static TransactionResponse transactionDetails(Transaction transaction) {
+
+        return TransactionResponse.builder().
+                transactionId(transaction.getTransactionId())
+                .fromLedgerId(transaction.getFromLedgerId())
+                .toLedgerId(transaction.getToLedgerId())
+                .transactionAmount(transaction.getTransactionAmount())
+                .transactionType(transaction.getTransactionType())
+                .transactionDateAndTime(transaction.getTransactionDate())
+                .build();
+    }
 }
 

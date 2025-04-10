@@ -16,9 +16,12 @@ import java.util.List;
 @RequestMapping("/ledger")
 public class LedgerController {
 
+    private final LedgerService ledgerService;
 
-    @Autowired
-    private LedgerService ledgerService;
+    public LedgerController(LedgerService ledgerService)
+    {
+        this.ledgerService=ledgerService;
+    }
 
     @PostMapping("/user/{userId}")
     public LedgerDTO createLedger(@RequestBody Ledger ledger, @PathVariable Long userId)
@@ -38,6 +41,8 @@ public class LedgerController {
     {
         return  ledgerService.getTransactionHistoryById(fromLedgerId);
     }
+
+
 
 
 

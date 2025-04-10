@@ -1,7 +1,5 @@
 package tech.zeta.account_ledger_management_app.controller;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.zeta.account_ledger_management_app.dto.TransactionResponse;
 import tech.zeta.account_ledger_management_app.enums.TransactionType;
@@ -13,9 +11,11 @@ import tech.zeta.account_ledger_management_app.service.TransactionService;
 public class TransactionController {
 
 
-    @Autowired
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
 
+    public TransactionController(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
 
     @PostMapping("/transfer")
     public TransactionResponse transferFunds(

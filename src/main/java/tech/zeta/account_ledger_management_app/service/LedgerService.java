@@ -2,11 +2,9 @@ package tech.zeta.account_ledger_management_app.service;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.zeta.account_ledger_management_app.dto.LedgerDTO;
 import tech.zeta.account_ledger_management_app.dto.TransactionResponse;
-import tech.zeta.account_ledger_management_app.exceptions.InvalidEntityIdProvidedException;
 import tech.zeta.account_ledger_management_app.exceptions.LedgerNotFoundException;
 import tech.zeta.account_ledger_management_app.exceptions.UserNotFoundException;
 import tech.zeta.account_ledger_management_app.models.Ledger;
@@ -23,60 +21,60 @@ import java.util.List;
 @Service
 public class LedgerService {
 
+    private final LedgerRepository ledgerRepository;
+    private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
-    @Autowired
-    private LedgerRepository ledgerRepository;
+    public LedgerService(LedgerRepository ledgerRepository, UserRepository userRepository,TransactionRepository transactionRepository){
 
-    @Autowired
-    private UserRepository userRepository;
+        this.ledgerRepository=ledgerRepository;
+        this.userRepository=userRepository;
+        this.transactionRepository=transactionRepository;
 
-    @Autowired
-    private TransactionRepository transactionRepository;
+    }
 
     public LedgerDTO createLedger(Ledger ledger, Long userId) {
 
-
-        // Fetch the user from the DB
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         ledger.setUsers(user);
         ledgerRepository.save(ledger);
-        return new LedgerDTO(
-                ledger.getLedgerId(),
-                ledger.getLedgerName(),
-                ledger.getLedgerBalance()
-        );
+        return ledgerDetails(ledger);
 
     }
 
     public LedgerDTO getLedgerById(Long ledgerId) {
 
-        if (ledgerId <= 0 || ledgerId < 10000) {
-            log.error("Invalid id provided:{}", ledgerId);
-            throw new InvalidEntityIdProvidedException("The Ledger Id Must be of length 6");
-        }
         Ledger ledger = ledgerRepository.findById(ledgerId).orElseThrow(() ->
                 new LedgerNotFoundException("The Provided Ledger Id Not Found, Please check the Id:" + ledgerId));
 
-        return new LedgerDTO(
-                ledger.getLedgerId(),
-                ledger.getLedgerName(),
-                ledger.getLedgerBalance()
-        );
+        return ledgerDetails(ledger);
     }
+
     public List<TransactionResponse> getTransactionHistoryById(Long fromLedgerId) {
+        ledgerRepository.findById(fromLedgerId).orElseThrow(() -> new LedgerNotFoundException("There is No Ledger Created with this ID:" + fromLedgerId));
 
-         ledgerRepository.findById(fromLedgerId).orElseThrow(()-> new LedgerNotFoundException("There is No Ledger Created with this ID:"));
+        List<Transaction> transactions = transactionRepository.findAllByFromLedgerId(fromLedgerId);
 
-          List<Transaction> transaction = transactionRepository.findAllByFromLedgerId(fromLedgerId);
+        if (transactions.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return transactionHistory(transactions);
 
-          if(transaction.isEmpty())
-          {
-              return Collections.emptyList();
-          }
+    }
 
-        return transaction.stream()
+    //utility methods
+    private static LedgerDTO ledgerDetails(Ledger ledger) {
+        return LedgerDTO.builder().ledgerId(ledger.getLedgerId())
+                .ledgerName(ledger.getLedgerName())
+                .ledgerBalance(ledger.getLedgerBalance())
+                .build();
+    }
+    
+    private static List<TransactionResponse> transactionHistory(List<Transaction> transactions)
+    {
+        return transactions.stream()
                 .map(txn -> TransactionResponse.builder()
                         .transactionId(txn.getTransactionId())
                         .fromLedgerId(txn.getFromLedgerId())
@@ -87,5 +85,6 @@ public class LedgerService {
                         .build())
                 .toList();
     }
-    }
+
+}
 

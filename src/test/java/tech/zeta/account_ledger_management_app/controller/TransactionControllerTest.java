@@ -44,12 +44,12 @@ class TransactionControllerTest {
     @Test
     @WithMockUser(username = "test user")
     void testTransferFunds_Success() throws Exception {
-        when(transactionService.processTransaction(10001L, 10002L, 500.0, TransactionType.INTERNAL))
+        when(transactionService.processTransaction(1L, 1L, 500.0, TransactionType.INTERNAL))
                 .thenReturn(response);
 
         mockMvc.perform(post("/transactions/transfer")
-                        .param("fromLedgerId", "10001")
-                        .param("toLedgerId", "10002")
+                        .param("fromLedgerId", "1")
+                        .param("toLedgerId", "1")
                         .param("transactionAmount", "500.0")
                         .param("transactionType", "INTERNAL")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -62,8 +62,8 @@ class TransactionControllerTest {
     @WithMockUser(username = "test user")
     void testTransferFunds_InvalidTransactionType() throws Exception {
         mockMvc.perform(post("/transactions/transfer")
-                        .param("fromLedgerId", "10001")
-                        .param("toLedgerId", "10002")
+                        .param("fromLedgerId", "1")
+                        .param("toLedgerId", "1")
                         .param("transactionAmount", "500.0")
                         .param("transactionType", "INVALID_TYPE")
                         .contentType(MediaType.APPLICATION_JSON))
