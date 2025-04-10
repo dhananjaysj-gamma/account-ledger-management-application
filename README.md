@@ -106,8 +106,18 @@ This project includes **unit tests** using:
 - Fund transfer logic
 - Error handling (e.g., Not Found, Unauthorizedn etc..)
 
-### 🧪 Run Tests
+## 🧩 Database Schema
 
-```bash
-./mvnw test
-   
+### ⚙️ Entity Relationships
+
+- **Tenant ↔ Users**: One Tenant has many Users  
+- **User ↔ Ledger**: One User has many Ledgers  
+- **Ledger ↔ Transactions**: One Ledger has many Transactions  
+
+---
+
+### 🗂️ ER Diagram
+
+```markdown
+![ER Diagram](./docs/er-diagram.png)
+
