@@ -13,8 +13,7 @@ A ledger management application where users can manage their accounts, handle in
 - [Testing](#-testing)
 - [Database Schema](#-database-schema)
 - [Security](#-security)
-- [Future Enhancements](#-future-enhancements)
-- [Contributors](#-contributors)
+- [API Contract anD Documentation](#-api-contracts-and-documentation)
 
 ---
 
@@ -120,4 +119,11 @@ This project includes **unit tests** using:
 
 ```markdown
 ![ER Diagram](./docs/er-diagram.png)
+
+### 🔐 Security
+
+- ✅ **JWT-based Authentication**  
+- ✅ **Role-based Authorization**  
+- ✅ **Soft deletes for Users**  
+- ✅ **Exception Handling and Validation**
 
