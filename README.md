@@ -21,7 +21,6 @@ A ledger management application where users can manage their accounts, handle in
 ## 🚀 Features
 
 - User registration, authentication using JWT.
-- Soft delete and role-based access control (RBAC).
 - Account and ledger creation and management.
 - Support for internal and external transactions.
 
