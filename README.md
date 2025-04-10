@@ -1,6 +1,17 @@
 # 🧾 Account-Ledger Management System
 
-A ledger management application where users can manage their accounts, handle internal and external transactions,. Built with Spring Boot and follows modern architectural and security best practices.
+## 📖 Overview
+
+A ledger management application where users can manage their accounts, handle internal and external transactions,. Built with Spring Boot and follows modern architectural and security best practices. It follows a **technology service provider model**, where:
+
+- **Tenants (banks)** are onboarded into the system from the backend.
+- **Users** are created under each tenant and can hold multiple **ledgers** (accounts).
+- **Users** can create account using the Id recieved by the tenant(banks).
+- **Ledgers** are created and associated with the user.
+- **Transactions** are recorded between ledgers, allowing fund transfers between internal and external ledgers.
+- The system ensures proper **authentication via JWT**, and **soft deletes** for audit safety.
+
+This project includes clean modular layers (Controller → Service → Repository), and follows best practices in exception handling, DTO usage, and security configuration.
 
 ---
 
