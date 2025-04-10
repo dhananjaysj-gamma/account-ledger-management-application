@@ -1,6 +1,6 @@
 # 🧾 Account-Ledger Management System
 
-A secure and scalable  ledger management application where users can manage their accounts, handle internal and external transactions,. Built with Spring Boot and follows modern architectural and security best practices.
+A ledger management application where users can manage their accounts, handle internal and external transactions,. Built with Spring Boot and follows modern architectural and security best practices.
 
 ---
 
@@ -68,7 +68,6 @@ A secure and scalable  ledger management application where users can manage thei
 | POST   | `/user/register`     | Register a new user            |
 | POST   | `/user/login`        | Authenticate and receive JWT   |
 | GET    | `/user/{userId}`     | Get user account info          |
-| PUT    | `/user/{userId}`     | Update user info               |
 | PATCH  | `/user/{userId}`     | Partially update user info     |
 | DELETE | `/user/{userId}`     | Soft delete a user             |
 
@@ -76,10 +75,11 @@ A secure and scalable  ledger management application where users can manage thei
 
 ### 📒 Ledger
 
-| Method | Endpoint              | Description            |
-|--------|-----------------------|------------------------|
-| POST   | `/ledger`             | Create a new ledger    |
-| GET    | `/ledger/{ledgerId}`  | Get ledger details     |
+| Method | Endpoint                                 | Description                      |
+|--------|------------------------------------------|----------------------------------|         
+| POST   | `/ledger/user/{userId}`                  | Create a new ledger              |
+| GET    | `/ledger/{ledgerId}`                     | Get ledger details               |
+| GET    | `/ledger/transaction/history?ledgerId`   | Get ledger transaction details   |
 
 ---
 
@@ -87,7 +87,8 @@ A secure and scalable  ledger management application where users can manage thei
 
 | Method | Endpoint                   | Description                        |
 |--------|----------------------------|------------------------------------|
-| POST   | `/transactions/transfer`   | Transfer funds between ledgers     |
+| POST   | `/transaction/transfer`   | Transfer funds between ledgers     |
+
 
 ---
 
@@ -102,10 +103,9 @@ This project includes **unit tests** using:
 ### 🔍 Test Coverage
 
 - `UserController`: register, login, CRUD
-- Role-based access control
 - Ledger creation & linking
 - Fund transfer logic
-- Error handling (e.g., Not Found, Unauthorized)
+- Error handling (e.g., Not Found, Unauthorizedn etc..)
 
 ### 🧪 Run Tests
 
