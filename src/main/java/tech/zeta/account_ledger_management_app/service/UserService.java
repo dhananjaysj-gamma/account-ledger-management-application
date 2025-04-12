@@ -2,8 +2,6 @@ package tech.zeta.account_ledger_management_app.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +14,7 @@ import tech.zeta.account_ledger_management_app.dto.UserUpdateRequest;
 import tech.zeta.account_ledger_management_app.dto.UsersDTO;
 import tech.zeta.account_ledger_management_app.enums.UserStatus;
 import tech.zeta.account_ledger_management_app.exceptions.UserNotFoundException;
+import tech.zeta.account_ledger_management_app.exceptions.UserNotRegisteredUnderTenantException;
 import tech.zeta.account_ledger_management_app.models.Users;
 import tech.zeta.account_ledger_management_app.repository.TenantRepository;
 import tech.zeta.account_ledger_management_app.repository.UserRepository;
@@ -25,12 +24,12 @@ import java.util.Collections;
 @Service
 public class UserService {
 
-
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final TenantRepository tenantRepository;
 
+    @Autowired
     public UserService(UserRepository userRepository, TenantRepository tenantRepository,JWTService jwtService, AuthenticationManager authenticationManager) {
         this.userRepository=userRepository;
         this.tenantRepository=tenantRepository;
@@ -40,17 +39,16 @@ public class UserService {
     private final BCryptPasswordEncoder encoder =new BCryptPasswordEncoder(10);
 
     public UsersDTO addUser(Users users) {
-
-        boolean userExists = tenantRepository.existsByRegisteredUserIdsContaining(users.getUserId());
+        boolean userExists = checkUserExistsUnderTenant(users);
 
         if(!userExists) {
             log.error("The user Id not registered under the tenant :{}",users.getUserId());
-            throw new UserNotFoundException("This Id is not registered under this bank,  Please check with bank for the registered Id:");
+            throw new UserNotRegisteredUnderTenantException("This Id is not registered under this bank,  Please check with bank for the registered Id:");
         }
+
          users.setPassword(encoder.encode(users.getPassword()));
          log.info("The user is added successfully:");
          userRepository.save(users);
-
          return userDetails(users);
     }
 
@@ -66,39 +64,46 @@ public class UserService {
     }
 
     public UserAccountInformation getUserDetailsById(Long userId){
-
-        Users users = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found, Please register with the Id provided by the bank: "+ userId));
-
+        Users users = extractUser(userId);
         return userAccountInformation(users);
     }
 
     public UsersDTO updateDetails(Long userId, UserUpdateRequest updateRequest) {
-
-        Users existingUser = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found, Please check the Id provided:"+ userId));
+        Users existingUser = extractUser(userId);
 
         if(updateRequest.getName()!=null) {
             existingUser.setName(updateRequest.getName());
         }
+
         if(updateRequest.getUsername()!=null) {
             existingUser.setUsername(updateRequest.getUsername());
         }
+
         if(updateRequest.getStatus()!=null) {
             existingUser.setStatus(updateRequest.getStatus());
         }
+
         log.info("The details are updated successfully!");
         userRepository.save(existingUser);
-
         return  userDetails(existingUser);
     }
 
    public String deleteUser(Long userId) {
-
-       Users user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found, Please check the Id provided "+ userId));
+       Users user = extractUser(userId);
        user.setStatus(UserStatus.INACTIVE);
        user.setIsDeleted(true);
        userRepository.save(user);
        log.info("The User is  Soft Deleted With Id: {}",userId);
        return "The user deleted successfully!";
+   }
+
+   private Users extractUser(Long userId) {
+       return userRepository.findById(userId)
+               .orElseThrow(()-> new UserNotFoundException("User not found, Please check the Id provided "+ userId));
+   }
+
+   public boolean checkUserExistsUnderTenant(Users users) {
+      return tenantRepository.existsByRegisteredUserIdsContaining(users.getUserId());
    }
 
    private static UserAccountInformation userAccountInformation(Users users) {
@@ -111,6 +116,7 @@ public class UserService {
                hasLedgers ? users.getLedger() : Collections.emptyList()
        );
    }
+
    private static UsersDTO userDetails(Users users) {
         return new UsersDTO(
                 users.getUserId(),

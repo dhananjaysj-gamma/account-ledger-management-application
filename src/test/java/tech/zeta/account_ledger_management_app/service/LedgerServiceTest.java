@@ -70,8 +70,10 @@ class LedgerServiceTest {
 
     @Test
     void testCreateLedgerSuccess() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(users));
-        when(ledgerRepository.save(any(Ledger.class))).thenReturn(ledger);
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(users));
+        when(ledgerRepository.save(any(Ledger.class)))
+                .thenReturn(ledger);
 
         LedgerDTO result = ledgerService.createLedger(ledger, 1L);
 
@@ -82,13 +84,15 @@ class LedgerServiceTest {
 
     @Test
     void testCreateLedger_UserNotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, () -> ledgerService.createLedger(ledger, 1L));
     }
 
     @Test
     void testGetLedgerByIdSuccess() {
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(ledger));
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(ledger));
         LedgerDTO result = ledgerService.getLedgerById(1L);
 
         assertEquals(1L, result.getLedgerId());
@@ -96,17 +100,19 @@ class LedgerServiceTest {
         assertEquals(1000.0, result.getLedgerBalance());
     }
 
-
     @Test
     void testGetLedgerById_NotFound() {
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.empty());
         assertThrows(LedgerNotFoundException.class, () -> ledgerService.getLedgerById(1L));
     }
 
     @Test
     void testGetTransactionHistoryByIdSuccess() {
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(ledger));
-        when(transactionRepository.findAllByFromLedgerId(1L)).thenReturn(List.of(transaction));
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(ledger));
+        when(transactionRepository.findAllByFromLedgerId(1L))
+                .thenReturn(List.of(transaction));
 
         List<TransactionResponse> responses = ledgerService.getTransactionHistoryById(1L);
         assertEquals(1, responses.size());
@@ -115,8 +121,10 @@ class LedgerServiceTest {
 
     @Test
     void testGetTransactionHistoryById_EmptyTransactionList() {
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(ledger));
-        when(transactionRepository.findAllByFromLedgerId(1L)).thenReturn(Collections.emptyList());
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(ledger));
+        when(transactionRepository.findAllByFromLedgerId(1L))
+                .thenReturn(Collections.emptyList());
 
         List<TransactionResponse> responses = ledgerService.getTransactionHistoryById(1L);
         assertTrue(responses.isEmpty());
@@ -124,7 +132,8 @@ class LedgerServiceTest {
 
     @Test
     void testGetTransactionHistoryById_LedgerNotFound() {
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.empty());
         assertThrows(LedgerNotFoundException.class, () -> ledgerService.getTransactionHistoryById(1L));
     }
 }

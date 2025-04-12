@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import javax.crypto.KeyGenerator;
@@ -17,20 +18,17 @@ import java.util.function.Function;
 
 @Service
 public class JWTService {
-    private String secretKey;
+    private final String secretKey;
 
+    @Autowired
     public JWTService() throws NoSuchAlgorithmException {
-
         KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
         SecretKey sKey = keyGenerator.generateKey();
         secretKey  = Base64.getEncoder().encodeToString(sKey.getEncoded());
     }
 
-    public String generateToken(String username)
-    {
-
+    public String generateToken(String username) {
         Map<String, Object> claims1 = new HashMap<>();
-
         return Jwts.builder()
                 .claims()
                 .add(claims1)
@@ -44,21 +42,18 @@ public class JWTService {
                 .signWith(getKey())
                 .compact();
     }
-    private SecretKey getKey()
-    {
+    private SecretKey getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes) ;
     }
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
-
     }
 
     private <T> T  extractClaim(String token, Function<Claims,T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
-
     }
 
     private Claims extractAllClaims(String token) {
@@ -66,10 +61,9 @@ public class JWTService {
     }
 
     public boolean isTokenExpired(String token) {
-        Date expirationDate = extractExpiration(token); // Extracts expiration date from the token
-        return expirationDate.before(new Date()); // Returns true if expired, false if valid
+        Date expirationDate = extractExpiration(token);
+        return expirationDate.before(new Date());
     }
-
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);

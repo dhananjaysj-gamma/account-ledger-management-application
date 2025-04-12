@@ -1,6 +1,5 @@
 package tech.zeta.account_ledger_management_app.dto;
 
-
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;

@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
         fromLedger.setLedgerId(1L);
         fromLedger.setLedgerBalance(1000.0);
         fromLedger.setUsers(user1);
-        fromLedger.setLedgerName("From Ledger");
+        fromLedger.setLedgerName("From ledger");
 
         toLedger.setLedgerId(2L);
         toLedger.setLedgerBalance(500.0);
@@ -62,9 +62,12 @@ import static org.mockito.Mockito.*;
     void testSuccessfulInternalTransaction() {
         toLedger.setUsers(user1);
 
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(fromLedger));
-        when(ledgerRepository.findById(2L)).thenReturn(Optional.of(toLedger));
-        when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(fromLedger));
+        when(ledgerRepository.findById(2L))
+                .thenReturn(Optional.of(toLedger));
+        when(transactionRepository.save(any(Transaction.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
 
         TransactionResponse response = transactionService.processTransaction(
                 1L, 2L, 200.0, TransactionType.INTERNAL);
@@ -80,10 +83,12 @@ import static org.mockito.Mockito.*;
 
     @Test
     void testSuccessfulExternalTransaction() {
-        toLedger.setUsers(user2); // different user
+        toLedger.setUsers(user2);
 
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(fromLedger));
-        when(ledgerRepository.findById(2L)).thenReturn(Optional.of(toLedger));
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(fromLedger));
+        when(ledgerRepository.findById(2L))
+                .thenReturn(Optional.of(toLedger));
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(inv -> inv.getArgument(0));
 
         TransactionResponse response = transactionService.processTransaction(
@@ -95,7 +100,8 @@ import static org.mockito.Mockito.*;
 
     @Test
     void testFromLedgerNotFound() {
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(ledgerRepository
+                .findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(LedgerNotFoundException.class, () ->
                 transactionService.processTransaction(1L, 2L, 100.0, TransactionType.INTERNAL));
@@ -103,8 +109,10 @@ import static org.mockito.Mockito.*;
 
     @Test
     void testToLedgerNotFound() {
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(fromLedger));
-        when(ledgerRepository.findById(2L)).thenReturn(Optional.empty());
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(fromLedger));
+        when(ledgerRepository.findById(2L))
+                .thenReturn(Optional.empty());
 
         assertThrows(LedgerNotFoundException.class, () ->
                 transactionService.processTransaction(1L, 2L, 100.0, TransactionType.INTERNAL));
@@ -115,8 +123,10 @@ import static org.mockito.Mockito.*;
         fromLedger.setLedgerBalance(50.0);
         toLedger.setUsers(user1);
 
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(fromLedger));
-        when(ledgerRepository.findById(2L)).thenReturn(Optional.of(toLedger));
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(fromLedger));
+        when(ledgerRepository.findById(2L))
+                .thenReturn(Optional.of(toLedger));
 
         assertThrows(InsufficientBalanceException.class, () ->
                 transactionService.processTransaction(1L, 2L, 100.0, TransactionType.INTERNAL));
@@ -126,8 +136,10 @@ import static org.mockito.Mockito.*;
     void testInvalidInternalTransactionBetweenDifferentUsers() {
         toLedger.setUsers(user2);
 
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(fromLedger));
-        when(ledgerRepository.findById(2L)).thenReturn(Optional.of(toLedger));
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(fromLedger));
+        when(ledgerRepository.findById(2L))
+                .thenReturn(Optional.of(toLedger));
 
         assertThrows(InvalidTransactionTypeException.class, () ->
                 transactionService.processTransaction(1L, 2L, 100.0, TransactionType.INTERNAL));
@@ -136,8 +148,10 @@ import static org.mockito.Mockito.*;
     @Test
     void testInvalidExternalTransactionBetweenSameUsers() {
         toLedger.setUsers(user1);
-        when(ledgerRepository.findById(1L)).thenReturn(Optional.of(fromLedger));
-        when(ledgerRepository.findById(2L)).thenReturn(Optional.of(toLedger));
+        when(ledgerRepository.findById(1L))
+                .thenReturn(Optional.of(fromLedger));
+        when(ledgerRepository.findById(2L))
+                .thenReturn(Optional.of(toLedger));
 
         assertThrows(InvalidTransactionTypeException.class, () ->
                 transactionService.processTransaction(1L, 2L, 100.0, TransactionType.EXTERNAL));

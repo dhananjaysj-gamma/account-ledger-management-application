@@ -1,7 +1,7 @@
 package tech.zeta.account_ledger_management_app.service;
 
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.zeta.account_ledger_management_app.dto.LedgerDTO;
 import tech.zeta.account_ledger_management_app.dto.TransactionResponse;
@@ -25,46 +25,50 @@ public class LedgerService {
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
 
+    @Autowired
     public LedgerService(LedgerRepository ledgerRepository, UserRepository userRepository,TransactionRepository transactionRepository){
-
         this.ledgerRepository=ledgerRepository;
         this.userRepository=userRepository;
         this.transactionRepository=transactionRepository;
-
     }
 
     public LedgerDTO createLedger(Ledger ledger, Long userId) {
-
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
+        Users user = extractUser(userId);
         ledger.setUsers(user);
         ledgerRepository.save(ledger);
         return ledgerDetails(ledger);
-
     }
 
     public LedgerDTO getLedgerById(Long ledgerId) {
-
-        Ledger ledger = ledgerRepository.findById(ledgerId).orElseThrow(() ->
-                new LedgerNotFoundException("The Provided Ledger Id Not Found, Please check the Id:" + ledgerId));
-
+        Ledger ledger = extractLedger(ledgerId);
         return ledgerDetails(ledger);
     }
 
     public List<TransactionResponse> getTransactionHistoryById(Long fromLedgerId) {
-        ledgerRepository.findById(fromLedgerId).orElseThrow(() -> new LedgerNotFoundException("There is No Ledger Created with this ID:" + fromLedgerId));
-
-        List<Transaction> transactions = transactionRepository.findAllByFromLedgerId(fromLedgerId);
+        extractLedger(fromLedgerId);
+        List<Transaction> transactions = extractHistoryOfTransactions(fromLedgerId);
 
         if (transactions.isEmpty()) {
             return Collections.emptyList();
         }
-        return transactionHistory(transactions);
 
+        return transactionHistory(transactions);
     }
 
-    //utility methods
+    private Users extractUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found, Please check the Id provided:"+userId));
+    }
+
+    private Ledger extractLedger(Long ledgerId) {
+        return ledgerRepository.findById(ledgerId)
+                .orElseThrow(() -> new LedgerNotFoundException("The Provided Ledger Id Not Found, Please check the Id:" + ledgerId));
+    }
+
+    private List<Transaction> extractHistoryOfTransactions(Long fromLedgerId) {
+        return transactionRepository.findAllByFromLedgerId(fromLedgerId);
+    }
+
     private static LedgerDTO ledgerDetails(Ledger ledger) {
         return LedgerDTO.builder().ledgerId(ledger.getLedgerId())
                 .ledgerName(ledger.getLedgerName())
@@ -72,8 +76,7 @@ public class LedgerService {
                 .build();
     }
     
-    private static List<TransactionResponse> transactionHistory(List<Transaction> transactions)
-    {
+    private static List<TransactionResponse> transactionHistory(List<Transaction> transactions) {
         return transactions.stream()
                 .map(txn -> TransactionResponse.builder()
                         .transactionId(txn.getTransactionId())
@@ -85,6 +88,5 @@ public class LedgerService {
                         .build())
                 .toList();
     }
-
 }
 

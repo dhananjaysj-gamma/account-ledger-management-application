@@ -16,15 +16,32 @@ public class GlobalExceptionHandler {
     private static final String MESSAGE = "message";
     private static final String STATUS = "status";
 
-    @ExceptionHandler(InvalidEntityIdProvidedException.class)
-    public ResponseEntity<Object> handlerOfInvalidEntityIdProvidedException(InvalidEntityIdProvidedException invalidEntityIdProvidedException) {
+    @ExceptionHandler(UserNotRegisteredUnderTenantException.class)
+    public ResponseEntity<Object> handlerOfUserNotRegisteredUnderTenant(UserNotRegisteredUnderTenantException userNotRegisteredUnderTenantException) {
         Map<String, Object> response = new HashMap<>();
         response.put(TIME_STAMP, LocalDateTime.now());
-        response.put(MESSAGE, invalidEntityIdProvidedException.getMessage());
-        response.put(STATUS, HttpStatus.NOT_FOUND.value());
+        response.put(MESSAGE, userNotRegisteredUnderTenantException.getMessage());
+        response.put(STATUS, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Object> handlerOfUserNotFoundException(UserNotFoundException userNotFoundException) {
+        Map<String, Object> response = new HashMap<>();
+        response.put(TIME_STAMP, LocalDateTime.now());
+        response.put(MESSAGE, userNotFoundException.getMessage());
+        response.put(STATUS, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handlerOfBadCredentialsException(BadCredentialsException badCredentialsException) {
+        Map<String, Object> response = new HashMap<>();
+        response.put(TIME_STAMP,LocalDateTime.now());
+        response.put(MESSAGE,badCredentialsException.getMessage());
+        response.put(STATUS,HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
+    }
     @ExceptionHandler(InsufficientBalanceException.class)
     public ResponseEntity<Object> handlerOfInsufficientBalanceException(InsufficientBalanceException insufficientBalanceException) {
         Map<String, Object> response = new HashMap<>();
@@ -50,24 +67,6 @@ public class GlobalExceptionHandler {
         response.put(MESSAGE, ledgerNotFoundException.getMessage());
         response.put(STATUS, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> handlerOfUserNotFoundException(UserNotFoundException userNotFoundException) {
-        Map<String, Object> response = new HashMap<>();
-        response.put(TIME_STAMP, LocalDateTime.now());
-        response.put(MESSAGE, userNotFoundException.getMessage());
-        response.put(STATUS, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Object> handlerOfBadCredentialsException(BadCredentialsException badCredentialsException) {
-        Map<String, Object> response = new HashMap<>();
-        response.put(TIME_STAMP,LocalDateTime.now());
-        response.put(MESSAGE,badCredentialsException.getMessage());
-        response.put(STATUS,HttpStatus.UNAUTHORIZED);
-        return new ResponseEntity<>(response,HttpStatus.UNAUTHORIZED);
     }
 }
 

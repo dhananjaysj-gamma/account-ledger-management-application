@@ -10,7 +10,6 @@ import tech.zeta.account_ledger_management_app.models.Users;
 import tech.zeta.account_ledger_management_app.service.JWTService;
 import tech.zeta.account_ledger_management_app.service.UserService;
 
-
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -19,13 +18,11 @@ public class UserController {
     private final JWTService jwtService;
     private final UserService userService;
 
-    public UserController(AuthenticationManager authenticationManager,JWTService jwtService,UserService userService)
-    {
+    public UserController(AuthenticationManager authenticationManager,JWTService jwtService,UserService userService) {
          this.authenticationManager=authenticationManager;
          this.jwtService=jwtService;
          this.userService=userService;
     }
-
 
     @PostMapping("/register")
     public UsersDTO addUser(@RequestBody Users users) {

@@ -1,7 +1,5 @@
 package tech.zeta.account_ledger_management_app.config;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,17 +19,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class ConfigurationClass {
 
+    private final JwtFilter jwtFilter;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    private  JwtFilter jwtFilter;
-
-    @Autowired
-    private  UserDetailsService userDetailsService;
-
-    public ConfigurationClass(UserDetailsService userDetailsService) {
+    public ConfigurationClass(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
         this.userDetailsService = userDetailsService;
+        this.jwtFilter=jwtFilter;
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {

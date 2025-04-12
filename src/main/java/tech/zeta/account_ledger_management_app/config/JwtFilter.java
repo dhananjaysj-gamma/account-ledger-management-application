@@ -1,6 +1,5 @@
 package tech.zeta.account_ledger_management_app.config;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,30 +19,29 @@ import java.io.IOException;
 
 @Component
 public class JwtFilter  extends OncePerRequestFilter {
-    @Autowired
-    private JWTService jwtService;
 
+    private final JWTService jwtService;
+    private ApplicationContext context;
 
     @Autowired
-    ApplicationContext context;
+    public JwtFilter(JWTService jwtService){
+        this.jwtService=jwtService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         /// Bearer followed by the Jwt token
-
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
 
-        if(authHeader != null && authHeader.startsWith("Bearer "))
-        {
+        if(authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             username = jwtService.extractUserName(token);
         }
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication()==null)
-        {
+        if(username != null && SecurityContextHolder.getContext().getAuthentication()==null) {
             UserDetails userDetails = context.getBean(CustomizedUserDetailService.class).loadUserByUsername(username);
 
             if(jwtService.validateToken(token,userDetails))
@@ -53,8 +51,6 @@ public class JwtFilter  extends OncePerRequestFilter {
                 SecurityContextHolder.getContext ().setAuthentication(authToken);
             }
         }
-
         filterChain.doFilter(request,response);
-
     }
 }

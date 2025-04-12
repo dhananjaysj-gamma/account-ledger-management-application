@@ -1,4 +1,5 @@
 package tech.zeta.account_ledger_management_app.controller;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,7 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk());
     }
+
     @Test
     void testRegisterUser_Success() throws Exception {
         when(userService.addUser(any(Users.class))).thenReturn(userDTO);
@@ -84,7 +86,6 @@ class UserControllerTest {
         info.setUserId(1L);
         info.setUsername("test user");
 
-
         when(userService.getUserDetailsById(1L)).thenReturn(info);
 
         mockMvc.perform(get("/user/1"))
@@ -93,11 +94,9 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value("test user"));
     }
 
-
     @Test
     @WithMockUser(username = "test user")
     void testPatchUpdateUserDetails_Success() throws Exception {
-
         UserUpdateRequest updateRequest = new UserUpdateRequest();
         updateRequest.setName("updated name");
         when(userService.updateDetails(eq(1L),any(UserUpdateRequest.class))).thenReturn(userDTO);

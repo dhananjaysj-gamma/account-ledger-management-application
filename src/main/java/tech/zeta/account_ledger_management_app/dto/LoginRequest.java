@@ -1,6 +1,5 @@
 package tech.zeta.account_ledger_management_app.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

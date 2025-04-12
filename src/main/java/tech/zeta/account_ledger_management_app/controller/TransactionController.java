@@ -7,7 +7,7 @@ import tech.zeta.account_ledger_management_app.enums.TransactionType;
 import tech.zeta.account_ledger_management_app.service.TransactionService;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/transaction")
 public class TransactionController {
 
 

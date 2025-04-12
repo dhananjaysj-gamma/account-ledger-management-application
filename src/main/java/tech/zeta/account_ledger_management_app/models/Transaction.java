@@ -1,13 +1,11 @@
 package tech.zeta.account_ledger_management_app.models;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import tech.zeta.account_ledger_management_app.enums.TransactionType;
-
 
 import java.time.LocalDateTime;
 
@@ -24,9 +22,9 @@ public class Transaction {
     private Long fromLedgerId;
     private Long toLedgerId;
     private double transactionAmount;
+
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
-
     private LocalDateTime transactionDate;
 
     @ManyToOne
