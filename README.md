@@ -24,7 +24,7 @@ This project includes clean modular layers (Controller → Service → Repositor
 - [Testing](#-testing)
 - [Database Schema](#-database-schema)
 - [Security](#-security)
-- [API Contract anD Documentation](#-api-contracts-and-documentation)
+- [Complete Documentation](#-complete-documentation)
 
 ---
 
@@ -126,7 +126,7 @@ This project includes **unit tests** using:
 - ✅ **Soft deletes for Users**  
 - ✅ **Exception Handling and Validation**
 
-### 📄 Full Documentation
+### 📄 Complete Documentation
 
 For detailed technical documentation, API contracts, flow diagram, architecture diagram, class diagram, and database schema:
 
