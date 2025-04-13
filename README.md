@@ -63,7 +63,7 @@ This project includes clean modular layers (Controller → Service → Repositor
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/dhananjaysj-gamma/account-ledger-management.git
+   git clone https://github.com/dhananjaysj-gamma/account-ledger-management-application.git
    cd account-ledger-management
 
 ---
@@ -109,20 +109,13 @@ This project includes **unit tests** using:
 - ✅ Mockito  
 - ✅ MockMvc  
 
-### 🔍 Test Coverage
-
-- `UserController`: register, login, CRUD
-- Ledger creation & linking
-- Fund transfer logic
-- Error handling (e.g., Not Found, Unauthorizedn etc..)
-
 ## 🧩 Database Schema
 
 ### ⚙️ Entity Relationships
 
 - **Tenant ↔ Users**: One Tenant has many Users  
 - **User ↔ Ledger**: One User has many Ledgers  
-- **Ledger ↔ Transactions**: One Ledger has many Transactions  
+- **Ledger ↔ Transactions**: One Ledger has many Transactions
 
 ---
 
@@ -135,6 +128,6 @@ This project includes **unit tests** using:
 
 ### 📄 Full Documentation
 
-For detailed technical documentation, API usage, design decisions, and database schema:
+For detailed technical documentation, API contracts, flow diagram, architecture diagram, class diagram, and database schema:
 
 👉 [View Full Documentation](https://your-domain.com/docs)  
