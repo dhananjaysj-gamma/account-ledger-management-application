@@ -130,4 +130,4 @@ This project includes **unit tests** using:
 
 For detailed technical documentation, API contracts, flow diagram, architecture diagram, class diagram, and database schema:
 
-👉 [View Full Documentation](https://your-domain.com/docs)  
+👉 [Yet to be added](https://your-domain.com/docs)  
