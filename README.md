@@ -126,11 +126,6 @@ This project includes **unit tests** using:
 
 ---
 
-### 🗂️ ER Diagram
-
-```markdown
-![ER Diagram](./docs/er-diagram.png)
-
 ### 🔐 Security
 
 - ✅ **JWT-based Authentication**  
@@ -138,3 +133,8 @@ This project includes **unit tests** using:
 - ✅ **Soft deletes for Users**  
 - ✅ **Exception Handling and Validation**
 
+### 📄 Full Documentation
+
+For detailed technical documentation, API usage, design decisions, and database schema:
+
+👉 [View Full Documentation](https://your-domain.com/docs)  
