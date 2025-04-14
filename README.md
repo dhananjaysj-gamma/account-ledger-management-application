@@ -1,4 +1,4 @@
-# 🧾 Account-Ledger Management System
+# 🧾 Account Ledger Management Application
 
 ## 📖 Overview
 
